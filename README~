@@ -1,0 +1,1 @@
+Realization of various IPv6 neighbor discovery mechanisms for constrained devices according to specifications of RFC 6775, RFC 4861, and 'RPL-based neighbor discovery protocol' proposed by myself. Implementations of the three mechanisms are based on uIPv6 stack of Contiki OS. So far it works well on the platform of Cooja (an in-carried simulator of Contiki).
