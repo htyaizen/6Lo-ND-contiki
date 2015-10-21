@@ -44,7 +44,7 @@ To disable:
 You also need to make sure the neighbor discovery code gets built. 
 
 
-//////////////Instructions on Neighbor Discovery Proxy Gateway Test///////////////////////
+//////////Instructions on Neighbor Discovery Proxy Gateway Test////////////////
 
 The implementation of 'RPL-based ND' also realize the ND proxy on the root node(see file of examples/ipv6/rpl-ND-root). It is aimed to run on a united simulation environment to test the functionality of the new protocol 'RPL-based ND'. The united simulation environment is constituted by three parts: 1. a core IPv6 network running on GNS3; 2. an 'RPL-based ND' installed 6LoWPAN network running on cooja connected with the core IPv6 network through a virtual network interface TAP0;  3. an VPCS running on GNS3 connected with the core IPv6 network. To test functionalities of the ND proxy gateway:
 
