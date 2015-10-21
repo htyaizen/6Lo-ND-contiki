@@ -39,8 +39,36 @@
 
 #include "contiki.h"
 
+#include "contiki-lib.h"
+#include "contiki-net.h"
+#include "net/rpl/rpl.h"
+
+
+#include "powertrace.h"
+
 #include <stdio.h> /* For printf() */
 
+#define PREFIX {0x20, 0x01, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00}
+
+static uip_ipaddr_t prefix; 
+/*---------------------------------------------------------------------------*/
+void
+set_prefix_64(uip_ipaddr_t *prefix_64)
+{
+  rpl_dag_t *dag;
+  uip_ipaddr_t ipaddr;
+  memcpy(&prefix, prefix_64, 16);
+  memcpy(&ipaddr, prefix_64, 16);
+  uip_ds6_set_addr_iid(&ipaddr, &uip_lladdr);
+  uip_ds6_addr_add(&ipaddr, 0, ADDR_AUTOCONF);
+
+  dag = rpl_set_root(RPL_DEFAULT_INSTANCE, &ipaddr);
+  if(dag != NULL) {
+    rpl_set_prefix(dag, &prefix, 64);
+//    printf("created a new RPL dag\n");
+  }
+}
+/*---------------------------------------------------------------------------*/
 
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "Hello world process");
@@ -49,9 +77,16 @@ AUTOSTART_PROCESSES(&hello_world_process);
 PROCESS_THREAD(hello_world_process, ev, data)
 {
   PROCESS_BEGIN();
- 
+  powertrace_start(CLOCK_SECOND * 2); 
 
-  printf("Hello, world\n");
+  uint8_t prefix_set[8] = PREFIX;
+ 
+  uip_ipaddr_t prefix_64; 
+  memset(&prefix_64, 0, 16);
+  memcpy(&prefix_64, prefix_set, 8);
+  set_prefix_64(&prefix_64);
+
+//  printf("Hello, world\n");
   
   PROCESS_END();
 }

@@ -38,6 +38,7 @@
  */
 
 #include "contiki.h"
+#include "powertrace.h"
 
 #include <stdio.h> /* For printf() */
 
@@ -50,9 +51,10 @@ AUTOSTART_PROCESSES(&hello_world_process);
 PROCESS_THREAD(hello_world_process, ev, data)
 {
   PROCESS_BEGIN();
+  powertrace_start(CLOCK_SECOND * 2);
  
 
-  printf("Hello, world\n");
+//  printf("Hello, world\n");
   
   PROCESS_END();
 }
