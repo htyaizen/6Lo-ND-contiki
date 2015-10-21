@@ -571,9 +571,16 @@ tcpip_ipv6_output(void)
     /* We first check if the destination address is on our immediate
        link. If so, we simply use the destination address as our
        nexthop address. */
+#if UIP_CONF_GW == 1
+    if(uip_ds6_is_addr_onlink(&UIP_IP_BUF->destipaddr) &&  if_send_to_slip != 1){
+      nexthop = &UIP_IP_BUF->destipaddr;
+    } 
+ #else
     if(uip_ds6_is_addr_onlink(&UIP_IP_BUF->destipaddr)){
       nexthop = &UIP_IP_BUF->destipaddr;
-    } else {
+    } 
+ #endif
+	else {
       uip_ds6_route_t *route;
       /* Check if we have a route to the destination address. */
       route = uip_ds6_route_lookup(&UIP_IP_BUF->destipaddr);
@@ -594,6 +601,9 @@ tcpip_ipv6_output(void)
 	    UIP_IP_BUF->proto = proto;
 	  }
 	  UIP_FALLBACK_INTERFACE.output();
+#if UIP_CONF_GW == 1
+	  if_send_to_slip = 0;
+#endif
 #else
           PRINTF("tcpip_ipv6_output: Destination off-link but no route\n");
 #endif /* !UIP_FALLBACK_INTERFACE */

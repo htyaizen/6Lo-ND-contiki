@@ -526,6 +526,10 @@ typedef union {
 CCIF extern uip_buf_t uip_aligned_buf;
 #define uip_buf (uip_aligned_buf.u8)
 
+#if UIP_CONF_GW == 1
+extern uint8_t if_send_to_slip;
+#endif
+
 
 /** @} */
 

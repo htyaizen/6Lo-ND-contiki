@@ -88,9 +88,7 @@
 #define uip_l3_hdr_len (UIP_IPH_LEN + uip_ext_len)
 #define uip_l3_icmp_hdr_len (UIP_IPH_LEN + uip_ext_len + UIP_ICMPH_LEN)
 
-#if UIP_CONF_GW == 1
-#include "net/ipv6/uip-gw-fwd.h"
-#endif
+
 
 
 #endif /*UIP_CONF_IPV6*/
@@ -527,6 +525,8 @@ typedef union {
 
 CCIF extern uip_buf_t uip_aligned_buf;
 #define uip_buf (uip_aligned_buf.u8)
+
+extern uint8_t if_send_to_slip;
 
 
 /** @} */

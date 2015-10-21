@@ -66,6 +66,8 @@ uint8_t eth_llheader[UIP_ETH_LLH_LEN];
 interface_t incoming_if = UNDEFINED;
 interface_t outgoing_if = UNDEFINED;
 
+uint8_t if_send_to_slip;
+
 
 /* 
  * Static Variables 
@@ -83,6 +85,7 @@ uip_gw_fwd_init()
 {
 	memset(&brigde_table, 0, sizeof(brigde_table));	
 	rtobtained = 0;
+	if_send_to_slip = 0;
 //	uip_ip6addr(&routeripaddr, 0x2001, 0x1, 0x0, 0x0, 0xc801, 0x17ff, 0xfea4, 0x54);
 
 }
@@ -184,7 +187,13 @@ switch (UIP_ND6_OPT_HDR_BUF->type) {
 	  gwnbraddr = gw_nbr_lookup(&UIP_ND6_NS_BUF->tgtipaddr);
 	  if(gwnbraddr != NULL && gwnbraddr->state == GW_NBR_REACHABLE) {
 		uip_ipaddr_copy(&UIP_IP_BUF->destipaddr, &UIP_IP_BUF->srcipaddr);
+		if(!uip_is_addr_link_local(&UIP_IP_BUF->srcipaddr))
 		uip_ipaddr_copy(&UIP_IP_BUF->srcipaddr, &UIP_ND6_NS_BUF->tgtipaddr);
+		else
+		{	
+			gw_lladdr_from_globladdr(&UIP_IP_BUF->srcipaddr, &UIP_ND6_NS_BUF->tgtipaddr);
+			if_send_to_slip = 1;		
+		}
 		flags = UIP_ND6_NA_FLAG_SOLICITED | UIP_ND6_NA_FLAG_OVERRIDE;
 			goto create_na;
 		}
@@ -218,11 +227,11 @@ switch (UIP_ND6_OPT_HDR_BUF->type) {
  PRINTF(" to ");
  PRINT6ADDR(&UIP_IP_BUF->destipaddr);
  
-   uip_gw_create_na(&UIP_IP_BUF->srcipaddr, &UIP_IP_BUF->destipaddr, &UIP_ND6_NS_BUF->tgtipaddr, flags);
+  uip_gw_create_na(&UIP_IP_BUF->srcipaddr, &UIP_IP_BUF->destipaddr, &UIP_ND6_NS_BUF->tgtipaddr, flags);
 	/* include TLLAO option */
   uip_gw_append_icmp_opt(UIP_ND6_OPT_TLLAO, eth_lladdr_id, 0, 0);
-	UIP_ICMP_BUF->icmpchksum = 0;
-	UIP_ICMP_BUF->icmpchksum = ~uip_icmp6chksum();
+  UIP_ICMP_BUF->icmpchksum = 0;
+  UIP_ICMP_BUF->icmpchksum = ~uip_icmp6chksum();
   UIP_STAT(++uip_stat.nd6.sent);
   PRINTF("GW Sending NA from ");
   PRINT6ADDR(&UIP_IP_BUF->srcipaddr);
@@ -318,6 +327,9 @@ gw_nbr_add(uip_ipaddr_t *addr)
 	}
 	brigde_table.table[index].state = GW_NBR_REACHABLE;
 	uip_ip6addr_copy(&brigde_table.table[index].addr, addr);
+	PRINTF("GW add new nbr: ");
+	PRINT6ADDR(addr);
+ 	PRINTF("\n");
 	
   return;
 	
@@ -331,9 +343,15 @@ gw_nbr_entry_t* gw_nbr_lookup(uip_ipaddr_t *addr)
 	
 	for (i = 0; i < brigde_table.elems; i++) {
 		if (uip_ip6addr_cmp(addr,&(brigde_table.table[i].addr))) {
+			PRINTF("GW has found a nbr: ");
+			PRINT6ADDR(addr);
+ 			PRINTF("\n");
 			return &(brigde_table.table[i]);
 		}
 	}
+	PRINTF("GW fails to find a nbr: ");
+	PRINT6ADDR(addr);
+ 	PRINTF("\n");
 	return NULL;
 }
 
@@ -343,8 +361,21 @@ void gw_nbr_delete(uip_ipaddr_t *addr)
 	for (i = 0; i < brigde_table.elems; i++) {
 		if (uip_ip6addr_cmp(addr,&(brigde_table.table[i].addr))) {
 			brigde_table.table[i].state = GW_NBR_GARBAGE_COLLECTABLE;
+			PRINTF("GW delete a nbr: ");
+			PRINT6ADDR(addr);
+ 			PRINTF("\n");
 		}
 	}	
+}
+
+
+void gw_lladdr_from_globladdr(uip_ipaddr_t* target, uip_ipaddr_t* source)
+{
+	uint8_t linklocal_prefix[2] = {0xfe, 0x80};
+	uip_ipaddr_copy(target, source);
+	memset(target, 0, 8);
+	memcpy(target, linklocal_prefix, 2);
+		
 }
 
 #endif /* UIP_CONF_IPV6 */

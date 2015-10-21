@@ -352,10 +352,8 @@ set_prefix_64(uip_ipaddr_t *prefix_64)
   memcpy(&prefix, prefix_64, 16);
   memcpy(&ipaddr, prefix_64, 16);
   prefix_set = 1;
-  //uip_ds6_set_addr_iid(&ipaddr, &uip_lladdr);
-  //uip_ds6_addr_add(&ipaddr, 0, ADDR_AUTOCONF);
-  uip_ip6addr(&ipaddr, 0x2001, 1, 0, 0, 0x200, 0, 0, 1);
-  uip_ds6_addr_add(&ipaddr, 0, ADDR_MANUAL);
+  uip_ds6_set_addr_iid(&ipaddr, &uip_lladdr);
+  uip_ds6_addr_add(&ipaddr, 0, ADDR_AUTOCONF);
 
   gw_nbr_add(&ipaddr);
  
