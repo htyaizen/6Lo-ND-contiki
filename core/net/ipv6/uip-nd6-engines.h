@@ -54,6 +54,9 @@
 #define UIP_ND6_ENGINE UIP_ND6_ENGINE_IPv6
 #endif
 
+
+#define UIP_DS6_LL_NUD	1
+
 /** \Some common constants needed for all the three Neighbor Discovery Mechanism */
 /** \name constant for RS or NS solicitations */
 /** @{ */
