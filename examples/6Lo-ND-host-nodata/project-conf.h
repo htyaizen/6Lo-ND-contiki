@@ -43,7 +43,7 @@
 
 #define UIP_ND6_CONF_ENGINE	UIP_ND6_ENGINE_6Lo
 
-#define UIP_CONF_IPV6_RPL               0
+#define UIP_CONF_IPV6_RPL               1
 #define UIP_CONF_ROUTER                 0
 #define UIP_CONF_ND6_SEND_RA		0
 #define UIP_CONF_ND6_SEND_RA_PERIODIC   0

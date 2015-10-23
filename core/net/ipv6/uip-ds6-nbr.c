@@ -214,25 +214,24 @@ uip_ds6_link_neighbor_callback(int status, int numtx)
   if(status == MAC_TX_OK) {
     uip_ds6_nbr_t *nbr;
     nbr = uip_ds6_nbr_ll_lookup((uip_lladdr_t *)dest);
-	#if UIP_ND6_ENGINE == UIP_ND6_ENGINE_IPv6
+#if UIP_ND6_ENGINE != UIP_ND6_ENGINE_6Lo
+    #if UIP_ND6_ENGINE == UIP_ND6_ENGINE_IPv6
     if(nbr != NULL &&
         (nbr->state == NBR_STALE || nbr->state == NBR_DELAY ||
          nbr->state == NBR_PROBE)) {
-	#endif
-	#if UIP_ND6_ENGINE == UIP_ND6_ENGINE_RPL
+
+	#elif UIP_ND6_ENGINE == UIP_ND6_ENGINE_RPL
 	if(nbr != NULL &&
         (nbr->state == NBR_STALE || nbr->state == NBR_INCOMPLETE ||
          nbr->state == NBR_REACHABLE)) {
-	#endif
-	#if UIP_ND6_ENGINE == UIP_ND6_ENGINE_6Lo
-	return;
-	#endif
+      #endif
       nbr->state = NBR_REACHABLE;
       stimer_set(&nbr->reachable, UIP_ND6_REACHABLE_TIME / 1000);
       PRINTF("uip-ds6-neighbor : received a link layer ACK : ");
       PRINTLLADDR((uip_lladdr_t *)dest);
       PRINTF(" is reachable.\n");
     }
+#endif
   }
   #if UIP_ND6_ENGINE == UIP_ND6_ENGINE_RPL
   if(nbr->state == MAC_TX_NOACK) {

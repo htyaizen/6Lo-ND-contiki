@@ -43,19 +43,13 @@
 #include "net/ip/uip.h"
 #include "net/ipv6/uip-ds6.h"
 #include "net/ip/uip-udp-packet.h"
-#include "powertrace.h"
+#include "apps/powertrace/powertrace.h"
 
 #include <stdio.h> /* For printf() */
 
 #define DEBUG 1
 #include "net/ip/uip-debug.h"
 
-#define UDP_CLIENT_PORT 8765
-#define UDP_SERVER_PORT 5678
-
-#ifndef PERIOD
-#define PERIOD 60
-#endif
 
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "hello world process");
@@ -64,8 +58,6 @@ AUTOSTART_PROCESSES(&hello_world_process);
 
 PROCESS_THREAD(hello_world_process, ev, data)
 {
-  static struct etimer periodic;
-  static struct ctimer backoff_timer;
 
   PROCESS_BEGIN();
 

@@ -1,3 +1,14 @@
-[13:38:34 - AWT-EventQueue-0] [GUI.java:2846] [INFO] - External tools default settings: /external_tools_linux.config
-[13:38:34 - AWT-EventQueue-0] [GUI.java:2876] [INFO] - External tools user settings: /home/user/.cooja.user.properties
-[13:38:44 - AWT-EventQueue-0] [Simulation.java:423] [INFO] - Simulation random seed: 123456
+[13:41:52 - AWT-EventQueue-0] [GUI.java:2846] [INFO] - External tools default settings: /external_tools_linux.config
+[13:41:52 - AWT-EventQueue-0] [GUI.java:2876] [INFO] - External tools user settings: /home/user/.cooja.user.properties
+[13:41:57 - AWT-EventQueue-0] [Simulation.java:423] [INFO] - Simulation random seed: 123456
+[13:43:14 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make clean TARGET=wismote 
+[13:43:14 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make clean TARGET=wismote 
+[13:43:15 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make hello-world.wismote TARGET=wismote 
+[13:52:05 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make clean TARGET=wismote 
+[13:52:06 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make clean TARGET=wismote 
+[13:52:06 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make hello-world.wismote TARGET=wismote 
+[13:54:22 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make clean TARGET=wismote 
+[13:54:23 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make clean TARGET=wismote 
+[13:54:24 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make clean TARGET=wismote 
+[13:54:24 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make clean TARGET=wismote 
+[13:54:25 - AWT-EventQueue-0] [CompileContiki.java:140] [INFO] - > make hello-world.wismote TARGET=wismote 

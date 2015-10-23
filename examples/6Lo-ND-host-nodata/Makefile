@@ -1,5 +1,6 @@
 DEFINES+=PROJECT_CONF_H=\"project-conf.h\"
 CONTIKI_PROJECT = hello-world-host
+APPS += powertrace
 all: $(CONTIKI_PROJECT)
 
 
