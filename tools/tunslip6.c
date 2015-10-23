@@ -54,6 +54,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+
 #include <err.h>
 
 #define UIP_CONF_TAP  1
@@ -163,6 +164,9 @@ serial_to_tun(FILE *inslip, int outfd)
   static union {
     unsigned char inbuf[2000];
   } uip;
+  static union{
+    unsigned char inbuf[2000];
+} tunoutput;
   static int inbufptr = 0;
   int ret,i;
   unsigned char c;
@@ -244,21 +248,21 @@ serial_to_tun(FILE *inslip, int outfd)
         }
 #define DEBUG_LINE_MARKER '\r'
       } else if(uip.inbuf[0] == DEBUG_LINE_MARKER) {  
-	printf("we go here! DEBUG_LINE_MARKER!\n")  
+	printf("we go here! DEBUG_LINE_MARKER!\n");  
 	fwrite(uip.inbuf + 1, inbufptr - 1, 1, stdout);
       } else if(is_sensible_string(uip.inbuf, inbufptr)) {
         if(verbose==1) {   /* strings already echoed below for verbose>1 */
-	printf("we go here! sensible string verbose 1!\n")  
+	printf("we go here! sensible string verbose 1!\n");  
           if (timestamp) stamptime();
           fwrite(uip.inbuf, inbufptr, 1, stdout);
         }
       } else {
         if(verbose>2) {
-	printf("we go here! not sensible string verbose bigger than 2!\n")  
+	printf("we go here! not sensible string verbose bigger than 2!\n"); 
           if (timestamp) stamptime();
           printf("Packet from SLIP of length %d - write TUN\n", inbufptr);
           if (verbose>4) {
-	printf("we go here! not sensible string verbose bigger than 4!\n")  
+	printf("we go here! not sensible string verbose bigger than 4!\n");  
 #if WIRESHARK_IMPORT_FORMAT
             printf("0000");
 	        for(i = 0; i < inbufptr; i++) printf(" %02x",uip.inbuf[i]);
@@ -272,9 +276,22 @@ serial_to_tun(FILE *inslip, int outfd)
 #endif
             printf("\n");
           }
+//	printf("we go here! try to add ethernet header for this packet!\n");
+//	uint8_t data[14] = {202,1,14,129,0,28,0,80,86,192,0,1,134,221};
+//	memcpy((void *)tunoutput.inbuf, (void *)data, 14);
+//	memcpy(tunoutput.inbuf + 14, uip.inbuf, inbufptr);
         }
-	printf("we go here! write to tun outfd!\n")  
-	if(write(outfd, uip.inbuf, inbufptr) != inbufptr) {
+	printf("we go here! write to tun outfd!\n");  	
+	ssize_t size = write(outfd, uip.inbuf, inbufptr);
+//	ssize_t size = write(outfd, tunoutput.inbuf, inbufptr + 14);
+	if ( size < 0 ) {
+        printf("writing to tun : Failed\n");
+        printf ("Error no is : %d\n", size);
+        printf("Error description is : %s\n",strerror(size));
+        }
+	printf("we have size of %d to write!\n", inbufptr);
+	printf("write size of %d to tun!\n", size);
+	if(size != inbufptr) {
 	  err(1, "serial_to_tun: write");
 	}
       }
@@ -390,7 +407,7 @@ write_to_serial(int outfd, void *inbuf, int len)
 {
   u_int8_t *p = inbuf;
   int i;
-
+#if 0
   if(verbose>2) {
     if (timestamp) stamptime();
     printf("Packet from TUN of length %d - write SLIP\n", len);
@@ -409,7 +426,7 @@ write_to_serial(int outfd, void *inbuf, int len)
       printf("\n");
     }
   }
-
+#endif
   /* It would be ``nice'' to send a SLIP_END here but it's not
    * really necessary.
    */
@@ -445,6 +462,7 @@ tun_to_serial(int infd, int outfd)
     unsigned char inbuf[2000];
   } uip;
   int size;
+  int i;
 
   if((size = read(infd, uip.inbuf, 2000)) == -1) err(1, "tun_to_serial: read");
 
@@ -453,6 +471,14 @@ tun_to_serial(int infd, int outfd)
   return size;
 #endif
 #if UIP_CONF_TAP == 1
+ if(verbose>2) {
+    if (timestamp) stamptime();
+    printf("Packet from TUN of length %d - write SLIP\n", size);
+    if (verbose>4) {
+      printf("0000");
+	  for(i = 0; i < size; i++) printf(" %02x", uip.inbuf);
+	}
+}
   write_to_serial(outfd, &uip.inbuf[14], size-14);
   return (size-14);
 #endif
@@ -518,7 +544,8 @@ devopen(const char *dev, int flags)
   return open(t, flags);
 }
 
-#ifdef linux
+//#ifdef linux
+#if 1
 #include <linux/if.h>
 #include <linux/if_tun.h>
 
@@ -526,7 +553,7 @@ int
 tun_alloc(char *dev, int tap)
 {
   struct ifreq ifr;
-  int fd, err;
+  int fd, err, i;
 
   if( (fd = open("/dev/net/tun", O_RDWR)) < 0 ) {
     return -1;
@@ -548,9 +575,23 @@ tun_alloc(char *dev, int tap)
     return err;
   }
   strcpy(dev, ifr.ifr_name);
+
+/*set mac address for tap0*/
+if(tap == 1){
+ fprintf(stderr, "configure mac address for tap0!\n");
+ char mac_address[6] = {0,80,86,192,0,1};
+for(i=0; i< 6;i++){
+ ifr.ifr_hwaddr.sa_data[i] = mac_address[i];
+}
+if(ioctl(fd, SIOCGIFHWADDR,&ifr)){
+close(fd);
+printf("fail to configure mac address for tap0!\n");
+}
+}
   return fd;
 }
-#else
+#endif
+#if 0
 int
 tun_alloc(char *dev, int tap)
 {

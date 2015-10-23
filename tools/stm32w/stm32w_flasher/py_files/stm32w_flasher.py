@@ -12,11 +12,10 @@ import optparse, os, sys, time
 try:
     import serial
     import ftdi
-    import pyudev
 except:
-    print 'Python modules serial, ftdi and pyudev could not be loaded.'
+    print 'Python modules serial and ftdi could not be loaded.'
     print 'Please install these dependencies:'
-    print '(On Ubuntu) $ sudo apt-get install python-serial python-ftdi python-pyudev'
+    print '(On Ubuntu) $ sudo apt-get install python-serial python-ftdi'
     sys.exit(-1)
 
 from messages import infoMessage, errorMessage

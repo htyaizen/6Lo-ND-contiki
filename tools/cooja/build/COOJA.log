@@ -1,0 +1,3 @@
+[13:38:34 - AWT-EventQueue-0] [GUI.java:2846] [INFO] - External tools default settings: /external_tools_linux.config
+[13:38:34 - AWT-EventQueue-0] [GUI.java:2876] [INFO] - External tools user settings: /home/user/.cooja.user.properties
+[13:38:44 - AWT-EventQueue-0] [Simulation.java:423] [INFO] - Simulation random seed: 123456
