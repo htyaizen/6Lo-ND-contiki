@@ -7,7 +7,7 @@
  *  (http://www.cnit.it).
  *
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -41,19 +41,19 @@
  */
 
 /**
- * \file   platform/seedeye/init-net.h
+ * \file   init-net.h
  * \brief  Network initialization for the SEEDEYE port.
  * \author Giovanni Pellerano <giovanni.pellerano@evilaliv3.org>
  * \date   2012-03-25
  */
 
-#ifndef INIT_NET_H_
-#define INIT_NET_H_
+#ifndef __INIT_NET_H__
+#define __INIT_NET_H__
 
 #include <stdint.h>
 
 void init_net(uint8_t );
 
-#endif /* INIT_NET_H_ */
+#endif /* __INIT_NET_H__ */
 
 /** @} */

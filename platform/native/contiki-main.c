@@ -35,7 +35,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/select.h>
-#include <errno.h>
 
 #ifdef __CYGWIN__
 #include "net/wpcap-drv.h"
@@ -49,17 +48,17 @@
 
 #include "dev/serial-line.h"
 
-#include "net/ip/uip.h"
+#include "net/uip.h"
 
 #include "dev/button-sensor.h"
 #include "dev/pir-sensor.h"
 #include "dev/vib-sensor.h"
 
 #if WITH_UIP6
-#include "net/ipv6/uip-ds6.h"
+#include "net/uip-ds6.h"
 #endif /* WITH_UIP6 */
 
-#include "net/rime/rime.h"
+#include "net/rime.h"
 
 #ifdef SELECT_CONF_MAX
 #define SELECT_MAX SELECT_CONF_MAX
@@ -130,15 +129,15 @@ const static struct select_callback stdin_fd = {
 static void
 set_rime_addr(void)
 {
-  linkaddr_t addr;
+  rimeaddr_t addr;
   int i;
 
-  memset(&addr, 0, sizeof(linkaddr_t));
+  memset(&addr, 0, sizeof(rimeaddr_t));
 #if UIP_CONF_IPV6
   memcpy(addr.u8, serial_id, sizeof(addr.u8));
 #else
   if(node_id == 0) {
-    for(i = 0; i < sizeof(linkaddr_t); ++i) {
+    for(i = 0; i < sizeof(rimeaddr_t); ++i) {
       addr.u8[i] = serial_id[7 - i];
     }
   } else {
@@ -146,7 +145,7 @@ set_rime_addr(void)
     addr.u8[1] = node_id >> 8;
   }
 #endif
-  linkaddr_set_node_addr(&addr);
+  rimeaddr_set_node_addr(&addr);
   printf("Rime started with address ");
   for(i = 0; i < sizeof(addr.u8) - 1; i++) {
     printf("%d.", addr.u8[i]);
@@ -191,7 +190,6 @@ main(int argc, char **argv)
   process_init();
   process_start(&etimer_process, NULL);
   ctimer_init();
-  rtimer_init();
 
 #if WITH_GUI
   process_start(&ctk_process, NULL);
@@ -199,12 +197,12 @@ main(int argc, char **argv)
 
   set_rime_addr();
 
+  queuebuf_init();
+
   netstack_init();
   printf("MAC %s RDC %s NETWORK %s\n", NETSTACK_MAC.name, NETSTACK_RDC.name, NETSTACK_NETWORK.name);
 
 #if WITH_UIP6
-  queuebuf_init();
-
   memcpy(&uip_lladdr.addr, serial_id, sizeof(uip_lladdr.addr));
 
   process_start(&tcpip_process, NULL);
@@ -261,9 +259,7 @@ main(int argc, char **argv)
 
     retval = select(maxfd + 1, &fdr, &fdw, NULL, &tv);
     if(retval < 0) {
-      if(errno != EINTR) {
-        perror("select");
-      }
+      perror("select");
     } else if(retval > 0) {
       /* timeout => retval == 0 */
       for(i = 0; i <= maxfd; i++) {

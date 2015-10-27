@@ -40,7 +40,7 @@
 #include "contiki.h"
 #include "ctk/ctk.h"
 #include "cfs/cfs.h"
-#include "net/ip/resolv.h"
+#include "net/resolv.h"
 
 #define MAX_USERNAMELEN 16
 #define MAX_PASSWORDLEN 16

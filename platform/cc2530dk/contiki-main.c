@@ -9,7 +9,6 @@
 #include "dev/io-arch.h"
 #include "dev/dma.h"
 #include "dev/cc2530-rf.h"
-#include "dev/radio.h"
 #include "dev/watchdog.h"
 #include "dev/clock-isr.h"
 #include "dev/port2.h"
@@ -17,7 +16,7 @@
 #include "dev/button-sensor.h"
 #include "dev/adc-sensor.h"
 #include "dev/leds-arch.h"
-#include "net/rime/rime.h"
+#include "net/rime.h"
 #include "net/netstack.h"
 #include "net/mac/frame802154.h"
 #include "debug.h"
@@ -46,7 +45,7 @@ PROCESS_NAME(viztool_process);
 extern volatile uint8_t sleep_flag;
 #endif
 /*---------------------------------------------------------------------------*/
-extern linkaddr_t linkaddr_node_addr;
+extern rimeaddr_t rimeaddr_node_addr;
 static CC_AT_DATA uint16_t len;
 /*---------------------------------------------------------------------------*/
 #if ENERGEST_CONF_ON
@@ -80,11 +79,9 @@ fade(int l) CC_NON_BANKED
 }
 /*---------------------------------------------------------------------------*/
 static void
-set_rf_params(void) CC_NON_BANKED
+set_rime_addr(void) CC_NON_BANKED
 {
   char i;
-  uint16_t short_addr;
-  uint8_t ext_addr[8];
 
 #if CC2530_CONF_MAC_FROM_PRIMARY
   __xdata unsigned char *macp = &X_IEEE_ADDR;
@@ -93,7 +90,7 @@ set_rf_params(void) CC_NON_BANKED
 #endif
 
   PUTSTRING("Rime is 0x");
-  PUTHEX(sizeof(linkaddr_t));
+  PUTHEX(sizeof(rimeaddr_t));
   PUTSTRING(" bytes long\n");
 
 #if CC2530_CONF_MAC_FROM_PRIMARY
@@ -117,12 +114,8 @@ set_rf_params(void) CC_NON_BANKED
   FMAP = CC2530_LAST_FLASH_BANK;
 #endif
 
-  /*
-   * Read IEEE address from flash, store in ext_addr.
-   * Invert endianness (from little to big endian)
-   */
-  for(i = 7; i >= 0; --i) {
-    ext_addr[i] = *macp;
+  for(i = (RIMEADDR_SIZE - 1); i >= 0; --i) {
+    rimeaddr_node_addr.u8[i] = *macp;
     macp++;
   }
 
@@ -132,28 +125,18 @@ set_rf_params(void) CC_NON_BANKED
   ENABLE_INTERRUPTS();
 #endif
 
-  short_addr = ext_addr[7];
-  short_addr |= ext_addr[6] << 8;
-
-  /* Populate linkaddr_node_addr. Maintain endianness */
-  memcpy(&linkaddr_node_addr, &ext_addr[8 - LINKADDR_SIZE], LINKADDR_SIZE);
-
   /* Now the address is stored MSB first */
 #if STARTUP_CONF_VERBOSE
   PUTSTRING("Rime configured with address ");
-  for(i = 0; i < LINKADDR_SIZE - 1; i++) {
-    PUTHEX(linkaddr_node_addr.u8[i]);
+  for(i = 0; i < RIMEADDR_SIZE - 1; i++) {
+    PUTHEX(rimeaddr_node_addr.u8[i]);
     PUTCHAR(':');
   }
-  PUTHEX(linkaddr_node_addr.u8[i]);
+  PUTHEX(rimeaddr_node_addr.u8[i]);
   PUTCHAR('\n');
 #endif
 
-  /* Write params to RF registers */
-  NETSTACK_RADIO.set_value(RADIO_PARAM_PAN_ID, IEEE802154_PANID);
-  NETSTACK_RADIO.set_value(RADIO_PARAM_16BIT_ADDR, short_addr);
-  NETSTACK_RADIO.set_value(RADIO_PARAM_CHANNEL, CC2530_RF_CHANNEL);
-  NETSTACK_RADIO.set_object(RADIO_PARAM_64BIT_ADDR, ext_addr, 8);
+  cc2530_rf_set_addr(IEEE802154_PANID);
   return;
 }
 /*---------------------------------------------------------------------------*/
@@ -252,7 +235,7 @@ main(void) CC_NON_BANKED
 
   /* initialize the netstack */
   netstack_init();
-  set_rf_params();
+  set_rime_addr();
 
 #if BUTTON_SENSOR_ON || ADC_SENSOR_ON
   process_start(&sensors_process, NULL);
@@ -261,7 +244,7 @@ main(void) CC_NON_BANKED
 #endif
 
 #if UIP_CONF_IPV6
-  memcpy(&uip_lladdr.addr, &linkaddr_node_addr, sizeof(uip_lladdr.addr));
+  memcpy(&uip_lladdr.addr, &rimeaddr_node_addr, sizeof(uip_lladdr.addr));
   queuebuf_init();
   process_start(&tcpip_process, NULL);
 #endif /* UIP_CONF_IPV6 */

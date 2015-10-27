@@ -38,8 +38,8 @@
  *         David Kopf <dak664@embarqmail.com>
  */
 
-#ifndef CONTIKI_CONF_H_
-#define CONTIKI_CONF_H_
+#ifndef __CONTIKI_CONF_H__
+#define __CONTIKI_CONF_H__
 
 /* Platform name, type, and MCU clock rate */
 #define PLATFORM_NAME  "RFA1"
@@ -143,7 +143,7 @@ typedef unsigned short uip_stats_t;
 #define RDC_CONF_MCU_SLEEP         1
 
 #if UIP_CONF_IPV6
-#define LINKADDR_CONF_SIZE        8
+#define RIMEADDR_CONF_SIZE        8
 #define UIP_CONF_ICMP6            1
 #define UIP_CONF_UDP              1
 #define UIP_CONF_TCP              1
@@ -151,7 +151,7 @@ typedef unsigned short uip_stats_t;
 #define SICSLOWPAN_CONF_COMPRESSION SICSLOWPAN_COMPRESSION_HC06
 #else
 /* ip4 should build but is largely untested */
-#define LINKADDR_CONF_SIZE        2
+#define RIMEADDR_CONF_SIZE        2
 #define NETSTACK_CONF_NETWORK     rime_driver
 #endif
 
@@ -237,8 +237,10 @@ typedef unsigned short uip_stats_t;
 #define NETSTACK_CONF_RDC         contikimac_driver
 /* Default is two CCA separated by 500 usec */
 #define NETSTACK_CONF_RDC_CHANNEL_CHECK_RATE   8
+/* Wireshark won't decode with the header, but padded packets will fail ipv6 checksum */
+#define CONTIKIMAC_CONF_WITH_CONTIKIMAC_HEADER 0
 /* So without the header this needed for RPL mesh to form */
-#define CONTIKIMAC_FRAMER_CONF_SHORTEST_PACKET_SIZE   43-18  //multicast RPL DIS length
+#define CONTIKIMAC_CONF_SHORTEST_PACKET_SIZE   43-18  //multicast RPL DIS length
 /* Not tested much yet */
 #define WITH_PHASE_OPTIMIZATION                0
 #define CONTIKIMAC_CONF_COMPOWER               1
@@ -349,4 +351,4 @@ typedef unsigned short uip_stats_t;
 #include PROJECT_CONF_H
 #endif
 
-#endif /* CONTIKI_CONF_H_ */
+#endif /* __CONTIKI_CONF_H__ */

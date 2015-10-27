@@ -48,8 +48,8 @@
 
 
 
-#ifndef CONTIKI_CONF_H_
-#define CONTIKI_CONF_H_
+#ifndef __CONTIKI_CONF_H__
+#define __CONTIKI_CONF_H__
 
 #ifdef PLATFORM_CONF_H
 #include PLATFORM_CONF_H
@@ -63,7 +63,7 @@
 /* 802.15.4 PAN ID */
 #define IEEE802154_CONF_PANID					0x1234
 /* Use EID 64, enable hardware autoack and address filtering */
-#define LINKADDR_CONF_SIZE					8
+#define RIMEADDR_CONF_SIZE					8
 #define UIP_CONF_LL_802154					1
 #define ST_CONF_RADIO_AUTOACK					1
 /* Number of buffers for incoming frames */
@@ -87,7 +87,7 @@
 //#define NETSTACK_CONF_MAC					csma_driver
 //#define NETSTACK_CONF_RDC					contikimac_driver
 #define NETSTACK_CONF_MAC					nullmac_driver
-#define NETSTACK_CONF_RDC					nullrdc_driver
+#define NETSTACK_CONF_RDC					sicslowmac_driver
 #define NETSTACK_CONF_FRAMER					framer_802154
 #define NETSTACK_CONF_RADIO					stm32w_radio_driver
 
@@ -125,6 +125,7 @@
    larger than a specified size, if no ContikiMAC header should be
    used. */
 #define SICSLOWPAN_CONF_COMPRESSION_THRESHOLD			63
+#define CONTIKIMAC_CONF_WITH_CONTIKIMAC_HEADER			0
 
 #define UIP_CONF_UDP                				1
 
@@ -172,5 +173,5 @@
 #include PROJECT_CONF_H
 #endif /* PROJECT_CONF_H */
 
-#endif /* CONTIKI_CONF_H_ */
+#endif /* __CONTIKI_CONF_H__ */
 /** @} */

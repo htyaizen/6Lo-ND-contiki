@@ -39,7 +39,7 @@
 #include "loader/cle.h"
 #include "loader/cmod.h"
 
-#include "net/ip/uip.h"
+#include "net/uip.h"
 
 #include "dev/xmem.h"
 

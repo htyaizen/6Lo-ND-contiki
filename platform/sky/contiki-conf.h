@@ -48,14 +48,13 @@
    larger than a specified size, if no ContikiMAC header should be
    used. */
 #define SICSLOWPAN_CONF_COMPRESSION_THRESHOLD 63
+#define CONTIKIMAC_CONF_WITH_CONTIKIMAC_HEADER 0
 
 #define CXMAC_CONF_ANNOUNCEMENTS         0
 #define XMAC_CONF_ANNOUNCEMENTS          0
 
 #ifndef QUEUEBUF_CONF_NUM
 #define QUEUEBUF_CONF_NUM                8
-
-#define UIP_ND6_CONF_ENGINE	UIP_ND6_ENGINE_6Lo
 #endif
 
 #else /* WITH_UIP6 */
@@ -91,17 +90,9 @@
 
 #define PACKETBUF_CONF_ATTRS_INLINE 1
 
-#ifdef RF_CHANNEL
-#define CC2420_CONF_CHANNEL RF_CHANNEL
-#endif
-
-#ifndef CC2420_CONF_CHANNEL
-#define CC2420_CONF_CHANNEL              26
-#endif /* CC2420_CONF_CHANNEL */
-
-#ifndef CC2420_CONF_CCA_THRESH
-#define CC2420_CONF_CCA_THRESH              -45
-#endif /* CC2420_CONF_CCA_THRESH */
+#ifndef RF_CHANNEL
+#define RF_CHANNEL              26
+#endif /* RF_CHANNEL */
 
 #define CONTIKIMAC_CONF_BROADCAST_RATE_LIMIT 0
 
@@ -135,7 +126,7 @@
 
 #ifdef WITH_UIP6
 
-#define LINKADDR_CONF_SIZE              8
+#define RIMEADDR_CONF_SIZE              8
 
 #define UIP_CONF_LL_802154              1
 #define UIP_CONF_LLH_LEN                0
@@ -153,8 +144,7 @@
 #define UIP_CONF_MAX_ROUTES   20
 #endif /* UIP_CONF_MAX_ROUTES */
 
-#define UIP_CONF_ND6_SEND_RA		1
-#define UIP_CONF_ND6_SEND_NA		1
+#define UIP_CONF_ND6_SEND_RA		0
 #define UIP_CONF_ND6_REACHABLE_TIME     600000
 #define UIP_CONF_ND6_RETRANS_TIMER      10000
 
@@ -213,9 +203,7 @@
 
 #define UIP_CONF_TCP_SPLIT       0
 
-#ifndef AES_128_CONF
-#define AES_128_CONF cc2420_aes_128_driver
-#endif /* AES_128_CONF */
+
 
 /* include the project config */
 /* PROJECT_CONF_H might be defined in the project Makefile */

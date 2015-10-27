@@ -30,8 +30,8 @@
  *
  */
 
-#ifndef CONTIKI_CONF_H_
-#define CONTIKI_CONF_H_
+#ifndef __CONTIKI_CONF_H__
+#define __CONTIKI_CONF_H__
 
 #define PROFILE_CONF_ON 0
 #define ENERGEST_CONF_ON 0
@@ -109,11 +109,6 @@
 #if WITH_UIP6
 
 
-#define UIP_CONF_ND6_SEND_RA		1
-#define UIP_CONF_ND6_SEND_NA		1
-
-#define UIP_ND6_CONF_ENGINE	UIP_ND6_ENGINE_6Lo
-
 
 /* Network setup for IPv6 */
 #define NETSTACK_CONF_NETWORK       sicslowpan_driver
@@ -123,7 +118,7 @@
 #define NETSTACK_CONF_FRAMER        framer_802154
 #define UIP_CONF_IPV6               1
 
-#define LINKADDR_CONF_SIZE          8
+#define RIMEADDR_CONF_SIZE          8
 
 #define UIP_CONF_LL_802154          1
 #define UIP_CONF_LLH_LEN            0
@@ -147,7 +142,7 @@
 #define UIP_CONF_ND6_REACHABLE_TIME     600000
 #define UIP_CONF_ND6_RETRANS_TIMER      10000
 
-#define LINKADDR_CONF_SIZE            8
+#define RIMEADDR_CONF_SIZE            8
 #define UIP_CONF_NETIF_MAX_ADDRESSES  3
 #define UIP_CONF_ND6_MAX_PREFIXES     3
 #define UIP_CONF_ND6_MAX_DEFROUTERS   2
@@ -248,4 +243,4 @@ typedef unsigned long rtimer_clock_t;
 #include PROJECT_CONF_H
 #endif /* PROJECT_CONF_H */
 
-#endif /* CONTIKI_CONF_H_ */
+#endif /* __CONTIKI_CONF_H__ */

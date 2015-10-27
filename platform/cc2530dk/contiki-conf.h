@@ -1,5 +1,5 @@
-#ifndef CONTIKI_CONF_H_
-#define CONTIKI_CONF_H_
+#ifndef __CONTIKI_CONF_H__
+#define __CONTIKI_CONF_H__
 
 #include "8051def.h"
 #include "sys/cc.h"
@@ -206,7 +206,7 @@
 #if UIP_CONF_IPV6
 /* Addresses, Sizes and Interfaces */
 /* 8-byte addresses here, 2 otherwise */
-#define LINKADDR_CONF_SIZE                   8
+#define RIMEADDR_CONF_SIZE                   8
 #define UIP_CONF_LL_802154                   1
 #define UIP_CONF_LLH_LEN                     0
 #define UIP_CONF_NETIF_MAX_ADDRESSES         3
@@ -280,4 +280,4 @@
 #define UIP_CONF_DS6_AADDR_NBU               1
 #endif
 
-#endif /* CONTIKI_CONF_H_ */
+#endif /* __CONTIKI_CONF_H__ */

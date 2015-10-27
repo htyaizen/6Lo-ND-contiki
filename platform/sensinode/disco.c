@@ -63,7 +63,7 @@
 #include "disco.h"
 /*---------------------------------------------------------------------------*/
 #define DEBUG DEBUG_NONE
-#include "net/ip/uip-debug.h"
+#include "net/uip-debug.h"
 /*---------------------------------------------------------------------------*/
 #if BATMON_CONF_ENABLED
 void batmon_log(uint8_t trigger);

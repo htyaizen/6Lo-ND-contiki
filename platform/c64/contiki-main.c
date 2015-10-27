@@ -57,27 +57,11 @@ PROCINIT(&etimer_process,
          &tcpip_process
          RESOLV_PROCESS);
 
-static struct ethernet_config *ethernet_config;
-
 /*-----------------------------------------------------------------------------------*/
-#if WITH_ARGS
-
-int contiki_argc;
-char **contiki_argv;
-
-void
-main(int argc, char **argv)
-{
-  contiki_argc = argc;
-  contiki_argv = argv;
-
-#else /* WITH_ARGS */
-
 void
 main(void)
 {
-
-#endif /* WITH_ARGS */
+  struct ethernet_config *ethernet_config;
 
   process_init();
 
@@ -124,7 +108,7 @@ main(void)
 
   procinit_init();
 
-  process_start((struct process *)&ethernet_process, (void *)ethernet_config);
+  process_start((struct process *)&ethernet_process, (char *)ethernet_config);
 
   autostart_start(autostart_processes);
 

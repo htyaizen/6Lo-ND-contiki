@@ -44,6 +44,7 @@
    larger than a specified size, if no ContikiMAC header should be
    used. */
 #define SICSLOWPAN_CONF_COMPRESSION_THRESHOLD 63
+#define CONTIKIMAC_CONF_WITH_CONTIKIMAC_HEADER 0
 
 #define CXMAC_CONF_ANNOUNCEMENTS         0
 #define XMAC_CONF_ANNOUNCEMENTS          0
@@ -89,17 +90,9 @@
 
 #define PACKETBUF_CONF_ATTRS_INLINE 1
 
-#ifdef RF_CHANNEL
-#define CC2420_CONF_CHANNEL RF_CHANNEL
-#endif
-
-#ifndef CC2420_CONF_CHANNEL
-#define CC2420_CONF_CHANNEL              26
-#endif /* CC2420_CONF_CHANNEL */
-
-#ifndef CC2420_CONF_CCA_THRESH
-#define CC2420_CONF_CCA_THRESH              -45
-#endif /* CC2420_CONF_CCA_THRESH */
+#ifndef RF_CHANNEL
+#define RF_CHANNEL              26
+#endif /* RF_CHANNEL */
 
 #define CONTIKIMAC_CONF_BROADCAST_RATE_LIMIT 0
 
@@ -133,7 +126,7 @@
 
 #ifdef WITH_UIP6
 
-#define LINKADDR_CONF_SIZE              8
+#define RIMEADDR_CONF_SIZE              8
 
 #define UIP_CONF_LL_802154              1
 #define UIP_CONF_LLH_LEN                0
